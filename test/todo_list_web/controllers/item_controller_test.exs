@@ -85,4 +85,24 @@ defmodule TodoListWeb.ItemControllerTest do
     item = fixture(:item)
     %{item: item}
   end
+
+  describe "toggle updates the status of an item 0 > 1 | 1 > 0" do
+    setup [:create_item]
+
+    test "toggle_status/1 item.status 1 > 0", %{item: item} do
+      assert item.status == 0
+      # first toggle
+      toggled_item = %{item | status: TodoListWeb.ItemController.toggle_status(item)}
+      assert toggled_item.status == 1
+      # second toggle sets status back to 0
+      assert TodoListWeb.ItemController.toggle_status(toggled_item) == 0
+    end
+
+    test "toggle/2 updates an item.status 0 > 1", %{conn: conn, item: item} do
+      assert item.status == 0
+      get(conn, Routes.item_path(conn, :toggle, item.id))
+      toggled_item = Todo.get_item!(item.id)
+      assert toggled_item.status == 1
+    end
+  end
 end
