@@ -12,7 +12,7 @@
   <section class="main" style="display: block;">
   	<input id="toggle-all" class="toggle-all" type="checkbox">
   	<label for="toggle-all">Mark all as complete</label>
-    <%= for item <- @items do %>
+    <%= for item <- filter(@items, @filter) do %>
       <li data-id="<%= item.id %>" class="<%= complete(item) %>">
         <div class="view">
           <%= if item.id == @editing.id do %>
@@ -37,15 +37,23 @@
   <footer class="footer" style="display: block;">
   	<span class="todo-count"><%= remaining_items(@items) %> item left</span>
   	<ul class="filters">
-  		<li>
-  			<a href="#/" class="selected">All</a>
-  		</li>
-  		<li>
-  			<a href="#/active">Active</a>
-  		</li>
-  		<li>
-  			<a href="#/completed">Completed</a>
-  		</li>
+      <li>
+        <a href="/items" class='<%= selected(@filter, "all") %>'>
+          All
+        </a>
+      </li>
+      <li>
+        <a href="/active" class='<%= selected(@filter, "active") %>'>
+          Active
+          [<%= Enum.count(filter(@items, "active")) %>]
+        </a>
+      </li>
+      <li>
+        <a href="/completed" class='<%= selected(@filter, "completed") %>'>
+          Completed
+          [<%= Enum.count(filter(@items, "completed")) %>]
+        </a>
+      </li>
   	</ul>
   	<button class="clear-completed" style="display: block;">Clear completed</button>
   </footer>
